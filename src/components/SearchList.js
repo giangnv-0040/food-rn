@@ -1,17 +1,29 @@
 import React from 'react';
-import { Text, View, StyleSheet, FlatList } from 'react-native';
+import { Text, View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import ResultsDetail from './ResultsDetail';
+import { withNavigation } from 'react-navigation';
 
-const SearchList = ({ title, results }) => {
+const SearchList = ({ title, results, navigation }) => {
+    if (!results.length) {
+        return null;
+    }
+
     return (
         <View>
             <Text style={styles.title}>{title}</Text>
-            <Text>Results: {results.length}</Text>
             <FlatList
                 horizontal
+                showsHorizontalScrollIndicator={false}
                 data={results}
                 keyExtractor={(result) => result.id}
                 renderItem={({ item }) => {
-                    return <Text>{item.name} | </Text>
+                    return (
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('ResultsShow', { id: item.id })}
+                        >
+                            <ResultsDetail result={item} />
+                        </TouchableOpacity>
+                    );
                 }}
             />
         </View>
@@ -21,8 +33,10 @@ const SearchList = ({ title, results }) => {
 const styles = StyleSheet.create({
     title: {
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginLeft: 15,
+        marginBottom: 5
     }
 });
 
-export default SearchList;
+export default withNavigation(SearchList);
